@@ -19,8 +19,13 @@ var map;
  */
 function initMap(){
     gapi.client.load("dashboardAPI", "v1", function() {
-        map = buildMap("map")
+        map = buildMap("map");
         getAllTrails('');
+        
+        $( window ).resize(function() {
+            $("#map").height( $(window).height() );
+            map.invalidateSize();
+        });
     }, "https://mapaton-public.appspot.com/_ah/api");
 }
 

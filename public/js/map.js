@@ -19,6 +19,7 @@ function buildMap(id_map) {
     
     $("#" + id_map).height( $(window).height() );
     map.invalidateSize();
+    
     return map;
 }
     
