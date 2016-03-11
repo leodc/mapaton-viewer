@@ -1,0 +1,26 @@
+doctype html
+html(lang='es')
+    head
+        meta(charset='utf-8')
+        meta(http-equiv='X-UA-Compatible', content='IE=edge')
+        meta(name='viewport', content='width=device-width, initial-scale=1')
+        title Mapaton Viewer
+        // Custom CSS
+        link(href='css/index.css', rel='stylesheet')
+        // Leaflet
+        link(rel='stylesheet', href='js/leaflet/leaflet.css')
+        //if lt IE 9
+          script(src='https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js')
+          script(src='https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js')
+    body
+        #map.content
+        
+        // jQuery
+        script(src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js')
+        // Leaflet
+        script(src='js/leaflet/leaflet.js')
+        script(src='js/map.js')
+        // Mapaton API
+        script(src='js/mapaton.js')
+        // Google API
+        script(src="https://apis.google.com/js/client.js?onload=initMap")
