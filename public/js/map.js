@@ -22,4 +22,8 @@ function buildMap(id_map) {
     
     return map;
 }
-    
+
+
+function addGroupLayer(map){
+    return L.layerGroup().addTo(map);
+}

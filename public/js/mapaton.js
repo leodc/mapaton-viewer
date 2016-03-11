@@ -10,8 +10,9 @@ var MAX_POINTS_PER_TRAIL = 100;   //Points per age... all the points please
 var total_trails = 0;
 var total_points = 0;
 
-//Leaflet map
-var map;
+
+//Map layers
+var group_api_layer;
 
 
 /**
@@ -19,7 +20,8 @@ var map;
  */
 function initMap(){
     gapi.client.load("dashboardAPI", "v1", function() {
-        map = buildMap("map");
+        var map = buildMap("map");
+        group_api_layer = addGroupLayer(map);
         getAllTrails('');
         
         $( window ).resize(function() {
@@ -48,7 +50,10 @@ function getAllTrails(cursor){
                 //More data to process
             	for( var i = 0; i < resp.trails.length; i++ ){ 
                     var trail = getGeometricTrail( resp.trails[i] );
-                    paintAllRawPoints(trail);
+                    
+                    if( trail !== null ){
+                        paintAllRawPoints(trail);
+                    }
                 }
                 
                 //recursivity
@@ -89,7 +94,8 @@ function getAllTrails(cursor){
                 color: getRandomColor()
             };
             
-            var polyline = L.polyline([], style).addTo(map);
+            var polyline = L.polyline([], style);
+            group_api_layer.addLayer(polyline);
             
             if(resp.points){
                 total_points += resp.points.length;
@@ -179,6 +185,7 @@ function getGeometricTrail( tempTrail ){
         	break;
     	default:
     		trail.trailStatus = "Inválido";
+    		return null;
     }
     
     return trail;
@@ -200,8 +207,12 @@ function componentToHex(c) {
     return hex.length == 1 ? "0" + hex : hex;
 }
 
+
+
  /*
     global gapi
     global buildMap
-    global L  
+    global L
+    global addGroupLayer
   */
+  
