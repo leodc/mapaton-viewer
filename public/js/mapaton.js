@@ -3,8 +3,8 @@
  * */
 
 
-var RESPONSE_MAX_OBJECT = 1;     //Objects per page
-var MAX_POINTS_PER_TRAIL = 100;   //Points per age... all the points please
+var RESPONSE_MAX_OBJECT = 20;     //Objects per page
+var MAX_POINTS_PER_TRAIL = 1000;   //Points per page... all the points please
 
 //Counters
 var total_trails = 0;
@@ -13,7 +13,7 @@ var total_points = 0;
 
 //Map layers
 var group_api_layer;
-
+var valid_routes = 0;
 
 /**
  * This method is called when the google client js has been loaded on the client page.
@@ -44,7 +44,6 @@ function getAllTrails(cursor){
     }).execute(function (resp) {
         if( 'undefined' === typeof resp.error ){
             if(resp.trails){
-                console.log("Processing new batch.");
                 total_trails += resp.trails.length;
                 
                 //More data to process
@@ -58,13 +57,7 @@ function getAllTrails(cursor){
                 
                 //recursivity
                 getAllTrails(resp.cursor);
-            }else{
-                //No more data to process
-                //stop recursivity
-                console.log("All the data has been processed.");
-                console.log("trails: " + total_trails);
             }
-            
         } else {
             console.log("Error getting the trails.");
             console.log(resp);
@@ -85,7 +78,6 @@ function getAllTrails(cursor){
     	cursor: ''
     }).execute(function (resp) {
         if( 'undefined' === typeof resp.error ){
-            
             //New Polyline Layer (?)
             //Maybe one MultyPolyLine Layer for all the trails (?)
             var style = {
@@ -96,6 +88,7 @@ function getAllTrails(cursor){
             
             var polyline = L.polyline([], style);
             group_api_layer.addLayer(polyline);
+            var popup = buildPopup(trail);
             
             if(resp.points){
                 total_points += resp.points.length;
@@ -108,14 +101,8 @@ function getAllTrails(cursor){
             	    polyline.addLatLng( latlngs );
                 }
                 
-                //getAllTrails(resp.cursor);
-            }else{
-                //No more data to process
-                //stop recursivity
-                console.log("All the data has been processed.");
-                console.log("trails: " + total_trails);
+                polyline.bindPopup(popup);
             }
-            
         } else {
             console.log("Error getting the trails.");
             console.log(resp);
@@ -175,6 +162,7 @@ function getGeometricTrail( tempTrail ){
     //Set a human readable status for the trail;
     switch(tempTrail.trailStatus){
     	case 0:
+    	    valid_routes++;
         	trail.trailStatus = "Válido";
         	break;
         case 1:
@@ -202,11 +190,23 @@ function getRandomColor(){
     return "#" + componentToHex(rgb[0]) + componentToHex(rgb[1]) + componentToHex(rgb[2]);
 }
 
+
+
 function componentToHex(c) {
     var hex = c.toString(16);
     return hex.length == 1 ? "0" + hex : hex;
 }
 
+
+function buildPopup(trail){
+    var html = "<b>" + trail.transportType + "</b> ";
+    html += "<i style='color:gray'>(" + trail.id + ")</i><br><br>";
+    html += "<b>Origen:</b> " + trail.origin + "<br>";
+    html += "<b>Destino:</b> " + trail.destination + "<br>";
+    html += "<b>Estatus:</b> " + trail.trailStatus;
+    
+    return html;
+}
 
 
  /*
@@ -214,5 +214,6 @@ function componentToHex(c) {
     global buildMap
     global L
     global addGroupLayer
+    global $
   */
   
